@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mariia Ivanova &mdash; Portfolio</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-media">
+    <img src="images/hero/IMG_3178.jpg" alt="Mariia Ivanova" class="hero-img">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-content">
+    <h1>Riia</h1>
+  </div>
+</header>
+
+<main class="gallery" id="gallery"></main>
+
+<footer>
+  &copy; 2026 &mdash; All images property of the photographer/model.
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-bar">
+    <span class="counter" id="counter"></span>
+    <div>
+      <a id="original-link" href="#" target="_blank" rel="noopener">View original</a>
+      <button class="icon-btn" id="close-btn" aria-label="Close">&times;</button>
+    </div>
+  </div>
+  <div class="lightbox-stage" id="lightbox-stage">
+    <div class="spinner"></div>
+    <button class="nav-btn nav-prev" id="prev-btn" aria-label="Previous">&#8249;</button>
+    <img id="lightbox-img" alt="">
+    <button class="nav-btn nav-next" id="next-btn" aria-label="Next">&#8250;</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
