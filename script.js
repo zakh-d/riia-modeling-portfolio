@@ -1,49 +1,3 @@
-// Each entry: base filename, original extension
-const IMAGES = [
-  ["IMG_0269", "JPG"],
-  ["IMG_0277", "JPG"],
-  ["IMG_0284", "JPG"],
-  ["IMG_0425", "JPG"],
-  ["IMG_0507", "JPG"],
-  ["IMG_0586", "JPG"],
-  ["IMG_1917", "JPG"],
-  ["IMG_2789", "JPG"],
-  ["IMG_2790", "JPG"],
-  ["IMG_2811", "PNG"],
-  ["IMG_2837", "PNG"],
-  ["IMG_2844", "PNG"],
-  ["IMG_3175", "JPG"],
-  ["IMG_3176", "JPG"],
-  ["IMG_3177", "JPG"],
-  ["IMG_3178", "JPG"],
-  ["IMG_3179", "JPG"],
-  ["IMG_3180", "JPG"],
-  ["IMG_3183", "JPG"],
-  ["IMG_3184", "JPG"],
-  ["IMG_3185", "JPG"],
-  ["IMG_3186", "JPG"],
-  ["IMG_3231", "JPG"],
-  ["IMG_3251", "JPG"],
-  ["IMG_6439", "JPG"],
-  ["IMG_6441", "JPG"],
-  ["IMG_6444", "JPG"],
-  ["IMG_6447", "JPG"],
-  ["IMG_6451", "JPG"],
-  ["IMG_6452", "JPG"],
-  ["IMG_8822", "JPG"],
-  ["IMG_8826", "JPG"],
-  ["IMG_8844", "JPG"],
-  ["IMG_8849", "JPG"],
-  ["IMG_8859", "JPG"],
-  ["IMG_8865", "JPG"],
-  ["IMG_9002", "JPG"],
-  ["IMG_9007", "JPG"],
-].map(([name, ext]) => ({
-  name,
-  thumb: `images/thumbs/${name}.jpg`,
-  original: `images/${name}.${ext}`,
-}));
-
 const gallery = document.getElementById("gallery");
 const lightbox = document.getElementById("lightbox");
 const stage = document.getElementById("lightbox-stage");
@@ -54,10 +8,67 @@ const closeBtn = document.getElementById("close-btn");
 const prevBtn = document.getElementById("prev-btn");
 const nextBtn = document.getElementById("next-btn");
 
+let IMAGES = [];
 let currentIndex = 0;
 
+async function loadImages() {
+  const [catalog, order] = await Promise.all([
+    fetch("images.json").then((r) => r.json()),
+    fetch("placement.json").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+  ]);
+
+  const byName = new Map(catalog.map((img) => [img.name, img]));
+  const ordered = [];
+  const seen = new Set();
+
+  order.forEach((name) => {
+    const img = byName.get(name);
+    if (img && !seen.has(name)) {
+      ordered.push(img);
+      seen.add(name);
+    }
+  });
+  catalog.forEach((img) => {
+    if (!seen.has(img.name)) {
+      ordered.push(img);
+      seen.add(img.name);
+    }
+  });
+
+  return ordered.map((img) => ({
+    name: img.name,
+    thumb: `images/thumbs/${img.name}.jpg`,
+    original: `images/${img.name}.${img.ext}`,
+  }));
+}
+
+// Per-column top offset (px), cycled by column index, so images don't
+// align horizontally across columns. First column stays at 0.
+const COLUMN_OFFSETS = [0, 54, 22, 78];
+
+let columnCount = 0;
+let resizeTimer = null;
+
+function getColumnCount() {
+  const w = window.innerWidth;
+  if (w <= 640) return 1;
+  if (w <= 900) return 2;
+  return 4;
+}
+
 function buildGallery() {
-  const frag = document.createDocumentFragment();
+  columnCount = getColumnCount();
+  gallery.innerHTML = "";
+
+  const columns = [];
+  for (let c = 0; c < columnCount; c++) {
+    const col = document.createElement("div");
+    col.className = "gallery-column";
+    col.style.paddingTop = `${COLUMN_OFFSETS[c % COLUMN_OFFSETS.length]}px`;
+    gallery.appendChild(col);
+    columns.push(col);
+  }
+
   IMAGES.forEach((img, i) => {
     const tile = document.createElement("figure");
     tile.className = "tile";
@@ -76,10 +87,16 @@ function buildGallery() {
     tile.appendChild(el);
     tile.appendChild(label);
     tile.addEventListener("click", () => openLightbox(i));
-    frag.appendChild(tile);
+    columns[i % columnCount].appendChild(tile);
   });
-  gallery.appendChild(frag);
 }
+
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (getColumnCount() !== columnCount) buildGallery();
+  }, 150);
+});
 
 function openLightbox(index) {
   currentIndex = index;
@@ -135,4 +152,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") showPrev();
 });
 
-buildGallery();
+loadImages().then((images) => {
+  IMAGES = images;
+  buildGallery();
+});

@@ -1,0 +1,153 @@
+:root {
+  --bg: #0b0b0c;
+  --bg-elev: #141416;
+  --text: #f2f0ec;
+  --text-dim: #9a968f;
+  --accent: #d4c9b8;
+  --border: #2a2a2c;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar h1 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  min-width: 8rem;
+  text-align: right;
+}
+
+.btn {
+  font: inherit;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-dim);
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #1a1917;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.hint {
+  margin: 1rem 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  max-width: 60rem;
+}
+
+.canvas-wrap {
+  padding: 0 1.5rem 4rem;
+  overflow-x: auto;
+}
+
+.canvas {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.canvas-column {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
+  transition: opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tile:active {
+  cursor: grabbing;
+}
+
+.tile.dragging {
+  opacity: 0.35;
+}
+
+.tile.drag-over {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.tile .tile-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.3rem 0.4rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  background: linear-gradient(to top, rgba(0,0,0,0.65), transparent);
+  pointer-events: none;
+}

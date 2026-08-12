@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout Editor — Riia Portfolio</title>
+<link rel="stylesheet" href="editor.css">
+</head>
+<body>
+
+<div class="toolbar">
+  <h1>Layout Editor</h1>
+  <div class="toolbar-actions">
+    <span id="status" class="status"></span>
+    <button id="reset-btn" class="btn btn-ghost">Reset to catalog order</button>
+    <button id="save-btn" class="btn btn-primary">Save placement.json</button>
+  </div>
+</div>
+
+<p class="hint">
+  Drag a tile to reorder it. This controls the order images flow into the columns on the site.
+  Click <strong>Save placement.json</strong> and choose the file in your project folder to overwrite it directly.
+</p>
+
+<div class="canvas-wrap">
+  <div class="canvas" id="canvas"></div>
+</div>
+
+<script src="editor.js"></script>
+</body>
+</html>
