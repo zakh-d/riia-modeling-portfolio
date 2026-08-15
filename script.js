@@ -156,3 +156,5 @@ loadImages().then((images) => {
   IMAGES = images;
   buildGallery();
 });
+
+document.getElementById("year").textContent = new Date().getFullYear();
