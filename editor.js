@@ -96,6 +96,11 @@ function renderCanvas() {
 
     tile.addEventListener("dragend", () => {
       dragIndex = null;
+      pointerY = null;
+      if (autoScrollFrame !== null) {
+        cancelAnimationFrame(autoScrollFrame);
+        autoScrollFrame = null;
+      }
       renderCanvas();
     });
 
@@ -122,6 +127,45 @@ function renderCanvas() {
 }
 
 window.addEventListener("resize", () => renderCanvas());
+
+// Auto-scroll the page while dragging a tile near the top/bottom of the viewport.
+const SCROLL_EDGE = 220; // px from viewport edge that triggers scrolling
+const SCROLL_MIN_SPEED = 6; // px per animation frame as soon as the zone is entered
+const SCROLL_MAX_SPEED = 28; // px per animation frame right at the edge
+let pointerY = null;
+let autoScrollFrame = null;
+
+function autoScrollStep() {
+  if (dragIndex === null || pointerY === null) {
+    autoScrollFrame = null;
+    return;
+  }
+
+  const viewportH = window.innerHeight;
+  let delta = 0;
+
+  if (pointerY < SCROLL_EDGE) {
+    const proximity = 1 - pointerY / SCROLL_EDGE; // 0 at zone boundary, 1 at edge
+    delta = -(SCROLL_MIN_SPEED + (SCROLL_MAX_SPEED - SCROLL_MIN_SPEED) * proximity);
+  } else if (pointerY > viewportH - SCROLL_EDGE) {
+    const proximity = 1 - (viewportH - pointerY) / SCROLL_EDGE;
+    delta = SCROLL_MIN_SPEED + (SCROLL_MAX_SPEED - SCROLL_MIN_SPEED) * proximity;
+  }
+
+  if (delta !== 0) {
+    window.scrollBy(0, delta);
+  }
+
+  autoScrollFrame = requestAnimationFrame(autoScrollStep);
+}
+
+document.addEventListener("dragover", (e) => {
+  if (dragIndex === null) return;
+  pointerY = e.clientY;
+  if (autoScrollFrame === null) {
+    autoScrollFrame = requestAnimationFrame(autoScrollStep);
+  }
+});
 
 function resetToCatalogOrder() {
   items = catalog.map((img) => ({
