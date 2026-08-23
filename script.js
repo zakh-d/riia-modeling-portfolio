@@ -158,3 +158,7 @@ loadImages().then((images) => {
 });
 
 document.getElementById("year").textContent = new Date().getFullYear();
+
+if (window.scrollY === 0) {
+  setTimeout(() => window.scrollBy({ top: 100, behavior: "smooth" }), 400);
+}
